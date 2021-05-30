@@ -1,10 +1,24 @@
 <template>
   <div id="nav">
-    <router-link to="/">Home</router-link> |
-    <router-link to="/about">About</router-link>
+    <router-link to="/">Accueil</router-link> |
+    <router-link to="/login">Connexion</router-link> |
+    <router-link to="/register">Inscription</router-link>
   </div>
-  <router-view/>
+  <div id="app">
+    <page-header />
+  </div>
+  <router-view />
 </template>
+
+<script>
+import PageHeader from '@/components/Header.vue'
+export default {
+  name: 'app',
+  components: {
+    PageHeader
+  }
+}
+</script>
 
 <style lang="scss">
 #app {
@@ -23,7 +37,34 @@
     color: #2c3e50;
 
     &.router-link-exact-active {
-      color: #42b983;
+      color: red;
+    }
+  }
+}
+
+.home {
+  display: flex;
+  flex-direction: column;
+  text-align: center;
+  align-items: center;
+
+  .title {
+    display: flex;
+    flex-direction: row;
+
+    img {
+      width: 50px;
+      margin-left: auto;
+    }
+    h1 {
+      color: red;
+      margin-right: auto;
+    }
+  }
+  form {
+    margin-top: 50px;
+    div {
+      margin-bottom: 20px;
     }
   }
 }
