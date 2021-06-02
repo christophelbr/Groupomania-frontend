@@ -9,7 +9,7 @@ export const auth = {
   namespaced: true,
   state: initialState,
   actions: {
-    login({ commit }, user) {
+    login({ commit }, user) { console.log('store login', user)
       return AuthService.login(user).then(
         user => {
           commit('loginSuccess', user);

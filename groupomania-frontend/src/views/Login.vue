@@ -34,7 +34,7 @@ export default {
   data() {
     return {
       user: new User("", ""),
-      loading: false,
+      //loading: false,
       message: "",
     };
   },
@@ -61,22 +61,22 @@ export default {
         }  */
 
       if (this.user.email && this.user.password) {
-        console.log("toto");
-        const loggedUser = JSON.stringify(this.user);
-        console.log(loggedUser);
-
-         this.$store.dispatch("auth/login", loggedUser).then(
-          () => {
+     
+         
+         await this.$store.dispatch("auth/login", this.user)
+         .then(
+          () => {           
             this.$router.push("/wall");
           },
-          (error) => {
-            this.loading = false;
+        )
+      } else {
+        (error) => {
+            //this.loading = false;
             this.message =
               (error.response && error.response.data) ||
               error.message ||
               error.toString();
           }
-        );
       }
       //  });
     },
