@@ -3,6 +3,7 @@ import Home from '../views/Home.vue'
 import Login from '../views/Login.vue'
 import Register from '../views/Register.vue'
 import Wall from '../views/Wall.vue'
+import Profile from '../views/Profile.vue'
 
 
 
@@ -23,8 +24,18 @@ const routes = [
     component: Register
   },
   {
+    path: '/profile/:id',
+    name: 'Profile',
+    component: Profile
+  },
+  {
     path: '/wall',
     name: 'Wall',
+    component: Wall
+  },
+  {
+    path: '/wall/post/:postId',
+    name: 'Comments',
     component: Wall
   }
 ]

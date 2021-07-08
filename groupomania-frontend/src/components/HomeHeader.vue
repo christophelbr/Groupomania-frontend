@@ -1,5 +1,10 @@
 <template>
   <div class="home">
+    <div id="nav">
+      <router-link to="/">Accueil</router-link> |
+      <router-link to="/login">Connexion</router-link> |
+      <router-link to="/register">Inscription</router-link>
+    </div>
     <div class="title">
       <img src="../assets/icon.svg" alt="logo goupomania" />
       <h1>Groupomania</h1>
@@ -9,7 +14,7 @@
 
 <script>
 export default {
-  name: "PageHeader",
+  name: "HomeHeader",
   components: {},
 };
 </script>

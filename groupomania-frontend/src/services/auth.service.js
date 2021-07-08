@@ -4,14 +4,14 @@ const API_URL = 'http://localhost:3000/api/auth/';
 
 class AuthService {
   login(user) {
-    console.log('auth.service', user);
     return axios
       .post(API_URL + 'login', {
         email: user.email,
         password: user.password
       })
       .then(response => {
-        if (response.data.accessToken) {
+        console.log(response.data.token);
+        if (response.data.token) {
           localStorage.setItem('user', JSON.stringify(response.data));
         }
 
@@ -28,6 +28,14 @@ class AuthService {
       username: user.username,
       email: user.email,
       password: user.password
+    })
+    .then(response => {
+      console.log(response.data.token);
+      if (response.data.token) {
+        localStorage.setItem('user', JSON.stringify(response.data));
+      }
+
+      return response.data;
     });
   }
 }

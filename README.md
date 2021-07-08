@@ -3,4 +3,4 @@ Frontend
 
 Serveur NodeJs dépendances :
     - @vue/cli
-    - 
+    - tailwindcss

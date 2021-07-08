@@ -1,5 +1,8 @@
 <template>
   <div class="home">
+    <div id="app">
+      <home-header />
+    </div>
     <form @submit.prevent="loginUser">
       <div class="form-group">
         <label>Adresse email</label>
@@ -28,15 +31,19 @@
 
 <script>
 import User from "../models/user";
+import HomeHeader from "@/components/HomeHeader.vue";
 
 export default {
   name: "Login",
   data() {
     return {
       user: new User("", ""),
-      //loading: false,
       message: "",
     };
+  },
+
+  components: {
+    HomeHeader,
   },
 
   computed: {
@@ -51,34 +58,22 @@ export default {
   },
 
   methods: {
-    async loginUser() {
-      console.log("user", this.user);
-      //this.loading = true;
-      /*      this.$validator.validateAll().then(isValid => {
-        if (!isValid) {
-          this.loading = false;
-          return;
-        }  */
-
+    loginUser() {
       if (this.user.email && this.user.password) {
-     
-         
-         await this.$store.dispatch("auth/login", this.user)
-         .then(
-          () => {           
-            this.$router.push("/wall");
-          },
-        )
+        this.$store.dispatch("auth/login", this.user).then(() => {
+          this.$router.push("/wall");
+          console.log(this.$store.state.auth.status);
+        });
       } else {
+        console.log("nok");
+
         (error) => {
-            //this.loading = false;
-            this.message =
-              (error.response && error.response.data) ||
-              error.message ||
-              error.toString();
-          }
+          this.message =
+            (error.response && error.response.data) ||
+            error.message ||
+            error.toString();
+        };
       }
-      //  });
     },
   },
 };

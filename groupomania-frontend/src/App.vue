@@ -1,23 +1,8 @@
 <template>
-  <div id="nav">
-    <router-link to="/">Accueil</router-link> |
-    <router-link to="/login">Connexion</router-link> |
-    <router-link to="/register">Inscription</router-link>
-  </div>
-  <div id="app">
-    <page-header />
-  </div>
   <router-view />
 </template>
 
 <script>
-import PageHeader from '@/components/Header.vue'
-export default {
-  name: 'app',
-  components: {
-    PageHeader
-  }
-}
 </script>
 
 <style lang="scss">

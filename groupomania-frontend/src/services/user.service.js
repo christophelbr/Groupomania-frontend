@@ -9,7 +9,13 @@ class UserService {
   }
 
   getUserBoard() {
+    let user = JSON.parse(localStorage.getItem('user'));
     return axios.get(API_URL + 'auth/profile/' + user.id, { headers: authHeader() });
+  }
+
+  updateUserProfile() {
+    let user = JSON.parse(localStorage.getItem('user'));
+    return axios.put(API_URL + 'auth/profile/' + user.id, { headers: authHeader() });
   }
 
   getModeratorBoard() {
