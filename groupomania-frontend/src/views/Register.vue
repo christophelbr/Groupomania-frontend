@@ -62,13 +62,15 @@ export default {
       this.submitted = true;
         if ((this.user.email && this.user.username && this.user.password)) {
           this.$store.dispatch('auth/register', this.user).then(() => {
+          this.$store.dispatch("auth/login", this.user).then(() => {
           this.$router.push("/wall");
           console.log(this.$store.state.auth.status);
+        });
         })
-          .then(
+          /* .then(
           () => {           
             this.$router.push("/wall");
-          });
+          }); */
         } else {
         (error) => {
           this.message =

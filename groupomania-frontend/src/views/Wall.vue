@@ -8,17 +8,17 @@
 
       <new-post-button />
 
-      <div class="post" v-for="item of content" :key="item.title">
 
+      <!-- Affichage d'une publication -->
+      <div class="post" v-for="item of content" :key="item.title">
         <h3>{{ item.title }}</h3>
-        
         <div>
           <span>{{ item.username }}</span>
-          <img class="miniature" :src="item.photo" />
+          <img v-if="item.photo" class="miniature" :src="item.photo" />
         </div>
-        
-        <span>{{ item.updatedAt }}</span>
-        
+
+        <span>{{ item.createdAt }}</span>
+
         <div>
           <img
             v-if="isImage(item.attachment)"
@@ -35,33 +35,85 @@
           />
           <p>{{ item.content }}</p>
         </div>
-        
+        <!-- Fin affichage publication -->
+
+        <!-- Like -->
         <div class="likecomment">
-          <span> {{ item.likes }} J'aime </span>
+          <div>
+            <button @click="like(item.id)" id="pouce">
+              <img src="../assets/pouce.png" alt="pouce" /></button
+            ><span> {{ item.likes }} </span>
+          </div>
+        <!-- Fin Like -->
 
-          <comment-button />
-
+          <comment-button :id="item.id" />
         </div>
 
-        <button v-if="item.Comments.length > 1" class="comments" v-on:click="commentvisible = true">
-          {{ item.Comments.length }} Commentaires
-        </button>
+        <div class="downPost">
 
-        <button v-else-if="item.Comments.length == 1" class="comments" v-on:click="commentvisible = true">
-          {{ item.Comments.length }} Commentaire
-        </button>
+          <!-- Affichage et suppression des commentaires -->
+          <button v-if="item.Comments.length > 1" class="comments" v-on:click="commentvisible = true" >
+            {{ item.Comments.length }} Commentaires
+          </button>
 
-        <button v-else class="comments">0 Commentaire</button>
-        
-        <div  v-if="commentvisible">
-          <div class="comment" v-for="comment of item.Comments" :key="comment.postId">
-            <div v-if="comment.postId == item.id">
-              <span v-if="commentvisible"> {{ comment.username }} </span>
-              <p >{{ comment.comment }}</p>
+          <button v-else-if="item.Comments.length == 1" class="comments" v-on:click="commentvisible = true" >
+            {{ item.Comments.length }} Commentaire
+          </button>
+
+          <button v-else class="comments">0 Commentaire</button>
+
+          <div v-if="commentvisible">
+            <button id="closeComm" v-on:click="commentvisible = false">
+              x
+            </button>
+
+            <div class="comment" v-for="comment of item.Comments" :key="comment.postId" >
+              <div v-if="comment.postId == item.id">
+                <span v-if="commentvisible"> {{ comment.username }} </span>
+                <p>{{ comment.comment }}</p>
+
+                <button @click="displayDeleteComment = true" v-if="isAdmin" id="corbeilleCom">
+                  <img src="../assets/corbeille.png" alt="corbeille" />
+                </button> 
+
+                <div v-if="displayDeleteComment">
+                  <p>Souhaitez-vous vraiment supprimer ce commentaire ?</p>
+                  <div>
+                    <button>oui</button>
+                    <button @click="displayDeleteComment = false">non</button>
+                  </div>
+                </div>
+              </div>
             </div>
           </div>
+          <!-- Fin affichage et suppression des commentaires  -->
 
-          <button v-on:click="commentvisible = false">x</button>
+          <!-- Suppression d'un Post -->
+          <div>
+            <button
+              v-if="user.id === item.UserId"
+              @click="displayDeletePost = true"
+              id="corbeille"
+            >
+              <img src="../assets/corbeille.png" alt="corbeille" />
+            </button>
+            <button
+              v-else-if="isAdmin"
+              @click="displayDeletePost = true"
+              id="corbeille"
+            >
+              <img src="../assets/corbeille.png" alt="corbeille" />
+            </button>
+
+            <div v-if="displayDeletePost">
+              <p>Souhaitez-vous vraiment supprimer ce post ?</p>
+              <div>
+                <button @click="delPost(item.id)">oui</button>
+                <button @click="displayDeletePost = false">non</button>
+              </div>
+            </div>
+          </div>
+          <!-- Fin suppression d'un Post -->
 
         </div>
       </div>
@@ -71,49 +123,51 @@
 
 <script>
 import LoggedHeader from "@/components/LoggedHeader";
-import PostService from "../services/post.service";
-import NewPostButton from '../components/NewPostButton.vue';
-import CommentButton from'../components/CommentButton';
+import NewPostButton from "../components/NewPostButton.vue";
+import CommentButton from "../components/CommentButton";
 
 export default {
   name: "Wall",
+  computed: {
+    content() {
+      return this.$store.getters.content;
+    },
+    post() {
+      return this.$store.getters.post;
+    },
+    user() {
+      return this.$store.getters.user;
+    },
+    currentUser() {
+      return this.$store.state.auth.user;
+    },
+
+    isAdmin() {
+      let user = JSON.parse(localStorage.getItem("user"));
+      return user.user.isAdmin;
+    },
+  },
   data() {
     return {
-      content: "",
-      Comments: "",
       commentvisible: false,
+      displayDeletePost: false,
+      displayDeleteComment: false,
     };
   },
 
   mounted() {
-    // Récupération des posts
-    PostService.getPublicContent().then(
-      (response) => {
-        this.content = response.data;
-        for (let [index, post] of this.content.entries()) {
-          this.displayComments(index, post);
-        }
-        console.log("TOTO", this.content);
-      },
-
-      (error) => {
-        this.content =
-          (error.response && error.response.data) ||
-          error.message ||
-          error.toString();
-      }
-    );
+    this.$store.dispatch("getContent");
+    this.$store.dispatch("getUserBoard");
+    let user = JSON.parse(localStorage.getItem("user"));
+    console.log(user.user.isAdmin);
   },
 
   methods: {
-    displayComments(index, post) {
-      PostService.getComments(post.id).then((response) => {
-        this.content[index].Comments = response.data ? response.data : 0;
-      });
-    },
-
-    newPost() {
-      console.log("newPost");
+    isModerator() {
+      let user = JSON.parse(localStorage.getItem("user"));
+      if (user.isAdmin == "true") {
+        return true;
+      }
     },
 
     isImage(attachment) {
@@ -128,6 +182,16 @@ export default {
       const extension = reg.exec(attachment)[1];
       const listExtension = ["mp4"];
       return listExtension.includes(extension);
+    },
+
+    like(id) {
+      console.log("TOTO", id);
+      this.$store.dispatch("likePost", id);
+    },
+
+    delPost(id) {
+      this.$store.dispatch("deletePost", id);
+      this.displayDeletePost = false;
     },
   },
 
@@ -168,8 +232,44 @@ export default {
       flex-direction: row;
       justify-content: space-around;
       padding-bottom: 10px;
+      #pouce {
+        border-style: none;
+        background-color: white;
+      }
       button {
         border-radius: 20px;
+      }
+      img {
+        height: 35px;
+      }
+    }
+
+    .downPost {
+      display: flex;
+      flex-direction: column;
+      justify-content: space-between;
+      #closeComm {
+        float: right;
+        margin-right: 0px;
+        padding-bottom: -18px;
+
+        border: none;
+        background: white;
+      }
+      img {
+        width: 50px;
+      }
+      #corbeilleCom {
+        border: none;
+        background: white;
+        img {
+          width: 35px;
+        }
+      }
+      #corbeille {
+        border-style: none;
+        background-color: white;
+        float: right;
       }
     }
 

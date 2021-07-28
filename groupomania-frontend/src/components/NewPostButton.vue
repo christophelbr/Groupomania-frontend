@@ -39,17 +39,16 @@
 </template>
 
 <script>
-import axios from "axios";
 
 export default {
   name: "new-post-button",
+
   data() {
     return {
       visible: false,
       file: "",
     };
   },
-
   components: {},
   methods: {
     handleFileUpload() {
@@ -57,86 +56,14 @@ export default {
     },
 
     newPost() {
-      let user = JSON.parse(localStorage.getItem("user"));
-      let token = user.token;
-
       const title = document.getElementById("title").value;
       const content = document.getElementById("content").value;
-      const attachment = document.getElementById("file").value;
-      const API_URL = "http://localhost:3000/api/";
-      const text = JSON.stringify({title, content});
-      console.log(text);
-
-      console.log(attachment);
-
       let formData = new FormData();
-        formData.append("image", this.file);
-        formData.append("title", title);
-        formData.append("content", content);
-
-        axios
-          .post(
-            `${API_URL}wall/post`,
-            formData,
-            {
-              headers: {
-                "Content-Type": "application/json",
-                Authorization: `${token}`,
-              },
-            }
-          )
-          .then(function () {
-            console.log("SUCCESS!!");
-          })
-          .then(this.$router.go())
-
-          .catch(function () {
-            console.log("FAILURE!!");
-          });
-
-      /* if (attachment == "") {
-        axios
-          .post(
-            `${API_URL}wall/post`,
-            {
-              title,
-              content,
-            },
-            {
-              headers: {
-                "Content-Type": "application/json",
-                Authorization: `${token}`,
-              },
-            }
-          )
-          .then((this.visible = false))
-          .then(this.$router.go());
-      } else {
-        let formData = new FormData();
-        formData.append("image", this.file);
-        axios
-          .post(
-            `${API_URL}wall/post`,
-            {
-              title,
-              content,
-            },
-            {
-              headers: {
-                "Content-Type": "application/json",
-                Authorization: `${token}`,
-              },
-            }
-          )
-          .then(function () {
-            console.log("SUCCESS!!");
-          })
-          //.then(this.$router.go())
-
-          .catch(function () {
-            console.log("FAILURE!!");
-          });
-      } */
+      formData.append("image", this.file);
+      formData.append("title", title);
+      formData.append("content", content);
+      this.$store.dispatch("createPost", formData);
+      this.visible = false;
     },
   },
 };

@@ -3,11 +3,11 @@
     <div id="app">
       <logged-header />
       <h2>
-        <strong>{{ currentUser.user.username }}</strong>
+        <strong>{{ user.username }}</strong>
       </h2>
       <div class="profile">
         <form class="photoprofile" @submit.prevent="newPhoto()">
-          <img :src="currentUser.user.photo" />
+          <img :src="user.photo" />
           <input
             type="file"
             id="file"
@@ -22,48 +22,66 @@
         <div class="infoprofile">
           <p>
             <strong>Email:</strong>
-            {{ currentUser.user.email }}
+            {{ user.email }}
           </p>
           <p>
             <strong>Description:</strong>
-            {{ currentUser.user.bio }}
-            <button>Modifier</button>
+            {{ user.bio }}
           </p>
-          <ul>
-            <li
-              v-for="(isAdmin, index) in currentUser.user.isAdmin"
-              :key="index"
-            >
-              <strong>Admin:</strong> {{ isAdmin }}
-            </li>
-          </ul>
+          <button type="submit" @click="visible = true">Modifier</button>
+          <div v-if="visible">
+            <form @submit.prevent="newBio()">
+              <div>
+                <label for="bio">Description :</label>
+                <textarea id="bio" name="bio"></textarea>
+              </div>
+              <div class="button">
+                <button type="submit">Mettre à jour</button>
+              </div>
+              <button id="x" v-if="visible" @click="visible = false">x</button>
+            </form>
+
+            <ul>
+              <li v-for="(isAdmin, index) in user.isAdmin" :key="index">
+                <strong>Admin:</strong> {{ isAdmin }}
+              </li>
+            </ul>
+          </div>
         </div>
       </div>
     </div>
+          <button @click="delProfile()" >Supprimer mon profil</button>
+
   </div>
 </template>
 
 <script>
 import LoggedHeader from "@/components/LoggedHeader";
-import axios from "axios";
-
+//import userService from "../services/user.service.js";
+//import axios from "axios";
 
 export default {
   name: "Profile",
-  data () {
+  data() {
     return {
-      selectedFile: null
-    }
+      visible: false,
+      selectedFile: null,
+      file: "",
+    };
   },
   components: {
     LoggedHeader,
   },
   computed: {
+    user() {
+      return this.$store.getters.user;
+    },
     currentUser() {
       return this.$store.state.auth.user;
     },
   },
   mounted() {
+    this.$store.dispatch("getUserBoard");
     if (!this.currentUser) {
       this.$router.push("/login");
     }
@@ -72,32 +90,41 @@ export default {
     handleFileUpload() {
       this.file = this.$refs.file.files[0];
     },
+
     newPhoto() {
-      let user = JSON.parse(localStorage.getItem("user"));
-      let token = user.token;
-      let userId = user.user.id;
-      console.log(user.user.id)
+      console.log(this.file);
+      let formData = new FormData();
+      formData.append("image", this.file);
+      this.$store.dispatch("updateUserPhoto", formData)
+        .then(function () {
+          console.log("SUCCESS!!");
+        })
 
-      const newPhoto = document.getElementById("file").value;
-      const API_URL = "http://localhost:3000/api";
-      
+        .catch(function () {
+          console.log("FAILURE!!");
+        });
+    },
+    newBio() {
+      this.visible = false;
+      const bio = document.getElementById("bio").value;
+      let formData = new FormData();
+      formData.append("bio", bio);
+      this.$store.dispatch("updateUserBio", formData)
+        .then(function () {
+          console.log("SUCCESS!!");
+        })
+        .catch(function () {
+          console.log("FAILURE!!");
+        });
+    },
+    delProfile() {
+      this.$store.dispatch("deleteUserProfile");
+      this.$store.dispatch("auth/logout");
 
-      console.log(newPhoto);
-      console.log(userId);
-      axios.post(`${API_URL}/profile/${userId}`,
-            {
-              newPhoto,
-            },
-            {
-              headers: {
-                "Content-Type": "application/json",
-                Authorization: `${token}`,
-              },
-            }
-          )
-          //.then(this.$router.go());
-      } 
-  }
+    },
+
+    
+  },
 };
 </script>
 

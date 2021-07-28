@@ -4,8 +4,7 @@ import Login from '../views/Login.vue'
 import Register from '../views/Register.vue'
 import Wall from '../views/Wall.vue'
 import Profile from '../views/Profile.vue'
-
-
+import Goodbye from '../views/Goodbye'
 
 const routes = [
   {
@@ -37,7 +36,12 @@ const routes = [
     path: '/wall/post/:postId',
     name: 'Comments',
     component: Wall
-  }
+  },
+  {
+    path: '/goodbye',
+    name: 'Goodbye',
+    component: Goodbye
+  },
 ]
 
 const router = createRouter({

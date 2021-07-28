@@ -2,7 +2,11 @@
   <div class="home">
     <div id="nav">
       <router-link to="/wall">Accueil</router-link> |
-      <router-link to="/profile/{{ user.id }}">Mon profile</router-link> |
+
+      <router-link :to="{ name: 'Profile', params: { id: user.id } }"
+        >Mon profile</router-link
+      >
+      |
       <router-link to="/" @click.prevent="logOut">Déconnexion</router-link>
     </div>
     <div class="title">
@@ -15,16 +19,17 @@
 <script>
 export default {
   name: "LoggedHeader",
-  data() {
-    return {
-      user: JSON.parse(localStorage.getItem("user")),
-    };
+  computed: {
+    user() {
+      return this.$store.state.auth.user;
+    },
   },
+
   components: {},
   methods: {
     logOut() {
-      this.$store.dispatch('auth/logout');
-    }
-  }
+      this.$store.dispatch("auth/logout");
+    },
+  },
 };
 </script>

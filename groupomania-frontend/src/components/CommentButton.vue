@@ -1,11 +1,15 @@
 <template>
-  <div>
-    <button v-on:click="visible = true">Commenter</button>
+  <div >
+    <button :id="uuid" v-on:click="visible = true">Commenter</button>
 
     <div v-if="visible">
       <form @submit.prevent="newComment()">
         <div>
-          <textarea id="comment" name="comment"></textarea>
+          <textarea
+            id="comment"
+            name="comment"
+            placeholder="Laisser un commentaire..."
+          ></textarea>
         </div>
 
         <div class="button">
@@ -19,41 +23,35 @@
 </template>
 
 <script>
-import axios from "axios";
+//import axios from "axios";
+//import CommentService from "../services/comment.service"
+
+let uuid = 0;
 
 export default {
   name: "comment-button",
+  beforeCreate() {
+    this.uuid = uuid.toString();
+    uuid += 1;
+  },
   data() {
     return {
       visible: false,
     };
   },
-
+  
   components: {},
   methods: {
-    newComment(postId) {
-      let user = JSON.parse(localStorage.getItem("user"));
-      let token = user.token;
+    newComment() {
+      
+      const getPostId = document.getElementById(this.uuid).parentElement;
+      const postId = getPostId.id;
+      this.$store.dispatch("postComment", postId);
+      //this.$store.dispatch("getContent");
+      this.visible = false;
+      
 
-      const comment = document.getElementById("comment").value;
-      const API_URL = "http://localhost:3000/api/";
-      console.log(`${API_URL}wall/post/${postId}`)
 
-      axios
-        .post(
-          `${API_URL}wall/post/${postId}`,
-          {
-            comment,
-          },
-          {
-            headers: {
-              "Content-Type": "application/json",
-              Authorization: `${token}`,
-            },
-          }
-        )
-        .then((this.visible = false));
-      // .then(this.$router.go());
     },
   },
 };
@@ -110,3 +108,14 @@ button {
   text-align: center;
 }
 </style>
+
+
+
+
+
+
+
+
+
+
+
