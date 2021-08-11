@@ -24,6 +24,12 @@ let token = user.token;
     return axios.post(`${API_URL}wall/post/${postId}`,{ comment,}, { headers: { "Content-Type": "application/json", Authorization: `${token}`, },})
 
   } 
+  deleteComment(id) {
+    const API_URL = 'http://localhost:3000/api/';
+    let user = JSON.parse(localStorage.getItem('user'));
+    let token = user.token;
+    return axios.delete(`${API_URL}wall/post/comment/${id}`, { headers: { 'Authorization': `${token}` } })
+  }
   
   
 }

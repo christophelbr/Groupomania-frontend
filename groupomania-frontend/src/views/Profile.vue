@@ -135,11 +135,14 @@ export default {
   }
   .profile {
     display: flex;
-    flex-direction: row;
-    width: 40%;
+    flex-direction: column;
+    width: 50%;
     margin-left: auto;
     margin-right: auto;
     margin-top: 50px;
+    margin-bottom:  20px;
+    box-shadow: 2px 2px 2px 2px;
+    border-radius: 1em;
     .photoprofile {
       display: flex;
       flex-direction: column;
@@ -149,10 +152,25 @@ export default {
       img {
         border-radius: 20px;
         width: 40%;
+        margin-bottom: 20px;
+
+      }
+      button {
+        margin-bottom: 20px;
       }
     }
     .infoprofile {
       text-align: left;
+      p { 
+        margin-left: 20px;
+      }
+      button {
+        margin-left: auto;
+        margin-right: auto;
+        margin-bottom: 20px;
+        margin-left: 20px;
+      }
+
     }
     button {
       margin-top: 20px;

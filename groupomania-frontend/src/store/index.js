@@ -56,21 +56,21 @@ export default createStore({
 
   mutations: {
     // Posts
-    ADD_POST(state, post) {
+    /* ADD_POST(state, post) {
       state.content = [post, ...state.content];
-    },
+    }, */
     GET_CONTENT(state, content) {
       state.content = content
     },
 
     // Commentaires
-    ADD_COMMENT(state, comment) {
-      state.comments = [comment, ...state.comments];
+    ADD_COMMENT(state, comments) {
+      state.comments = [comments, ...state.comments];
     },
-    // Likes
-    LIKE_POST(state, like) {
-      state.content = [like, ...state.content];
+    GET_COMMENT(state, comments) {
+      state.comments = comments;
     },
+    
     // Users
     GET_PROFILE(state, user) {
       state.auth.user = user
@@ -98,6 +98,7 @@ export default createStore({
         for (let [index, post] of content.entries()) {
           commentService.getComments(post.id).then((response) => {
             content[index].Comments = response.data ? response.data : 0;
+            commit("GET_COMMENT", content[index].Comments);
           });
         }
         commit("GET_CONTENT", content);
@@ -106,40 +107,66 @@ export default createStore({
     // Création d'un Post
     createPost({ commit }, post) {
       postService.createPost(post)
-        .then((response) => {
+        /* .then((response) => {
           const post = response.data;
           commit("ADD_POST", post);
-
-        })
+        }) */
         .then(() => {
           postService.getContent().then((response) => {
             const content = response.data;
+            for (let [index, post] of content.entries()) {
+              commentService.getComments(post.id).then((response) => {
+                content[index].Comments = response.data ? response.data : 0;
+                commit("GET_COMMENT", content[index].Comments);
+              });
+            }
             commit("GET_CONTENT", content);
           });
         });
     },
 
     // Suppression d'un post
-    deletePost({ commit }, post){
+    deletePost({ commit }, post) {
       postService.deletePost(post)
-      .then( console.log('post supprimé'))
-      .then(() => {
-        postService.getContent().then((response) => {
-          const content = response.data;
-          commit("GET_CONTENT", content);
+        .then(console.log('post supprimé'))
+        .then(() => {
+          postService.getContent().then((response) => {
+            const content = response.data;
+            for (let [index, post] of content.entries()) {
+              commentService.getComments(post.id).then((response) => {
+                content[index].Comments = response.data ? response.data : 0;
+                commit("GET_COMMENT", content[index].Comments);
+              });
+            }
+            commit("GET_CONTENT", content);
+          });
         });
-      });
     },
 
 
     // Commentaires
+
+    // Récupération des commentaires
+
+    getComments({ commit }) {
+      postService.getContent().then((response) => {
+        const content = response.data;
+        for (let [index, post] of content.entries()) {
+          commentService.getComments(post.id).then((response) => {
+            content[index].Comments = response.data ? response.data : 0;
+            commit("GET_COMMENT", content[index].Comments);
+          });
+        }
+      });
+    },
+
+
     // Publication d'un commentaire
     postComment({ commit }, comment) {
       commentService.postComment(comment)
         .then((response) => {
           const comment = response.data;
           commit("ADD_COMMENT", comment);
-          console.log('response', comment)
 
         })
         .then(() => {
@@ -148,27 +175,52 @@ export default createStore({
             for (let [index, post] of content.entries()) {
               commentService.getComments(post.id).then((response) => {
                 content[index].Comments = response.data ? response.data : 0;
+                commit("GET_COMMENT", content[index].Comments);
               });
             }
             commit("GET_CONTENT", content);
           });
         })
     },
+    // Suppression d'un commantaire
+    deleteComment({ commit }, comment) {
+      commentService.deleteComment(comment)
+        .then(console.log('commentaire supprimé'))
+        .then(() => {
+          postService.getContent().then((response) => {
+            const content = response.data;
+            for (let [index, post] of content.entries()) {
+              commentService.getComments(post.id).then((response) => {
+                content[index].Comments = response.data ? response.data : 0;
+                commit("GET_COMMENT", content[index].Comments);
+              });
+            }
+            commit("GET_CONTENT", content);
+          });
+        });
+    },
+
 
     // Likes
 
     likePost({ commit }, like) {
       console.log("tata", like);
       likeService.likePost(like)
-      .then((response) => {
-        const newLike = response.data;
-        console.log('newlike', newLike)
-        //commit("LIKE_POST", like);
-        
-      })
+        .then((response) => {
+          const newLike = response.data;
+          console.log('newlike', newLike)
+          //commit("LIKE_POST", like);
+
+        })
         .then(() => {
           postService.getContent().then((response) => {
             const content = response.data;
+            for (let [index, post] of content.entries()) {
+              commentService.getComments(post.id).then((response) => {
+                content[index].Comments = response.data ? response.data : 0;
+                commit("GET_COMMENT", content[index].Comments);
+              });
+            }
             commit("GET_CONTENT", content);
           });
         });
@@ -225,11 +277,12 @@ export default createStore({
         })
     },
 
-    deleteUserProfile({ commit }, id){
+    deleteUserProfile({ commit }, id) {
       userService.deleteUserProfile()
-      .then( console.log('profil supprimé'))
-      .then(() => {
-        router.push("/goodbye");});
+        .then(console.log('profil supprimé'))
+        .then(() => {
+          router.push("/goodbye");
+        });
       commit("DELETE_PROFILE", id)
     },
 

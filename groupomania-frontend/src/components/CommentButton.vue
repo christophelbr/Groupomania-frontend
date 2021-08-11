@@ -7,7 +7,6 @@
         <div>
           <textarea
             id="comment"
-            name="comment"
             placeholder="Laisser un commentaire..."
           ></textarea>
         </div>
@@ -16,7 +15,7 @@
           <button type="submit">Publier</button>
         </div>
 
-        <button id="x" v-if="visible" @click="visible = false">x</button>
+        <button class="x" v-if="visible" @click="visible = false">x</button>
       </form>
     </div>
   </div>
@@ -66,7 +65,7 @@ form {
   margin-bottom: 15px;
   box-shadow: 2px 2px 2px 2px;
   border-radius: 1em;
-  #x {
+  .x {
     width: 22px;
     border-style: none;
   }
@@ -86,8 +85,8 @@ label {
 
 input,
 textarea {
+  width: 90%;
   font: 1em sans-serif;
-  width: 300px;
   box-sizing: border-box;
   border: 1px solid #999;
 }
@@ -107,6 +106,12 @@ button {
   width: 300px;
   text-align: center;
 }
+@media screen and (max-width: 1400px) {
+    button {
+  width: 100px;
+}
+
+  }
 </style>
 
 

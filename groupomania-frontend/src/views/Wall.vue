@@ -7,13 +7,13 @@
     <div class="wall">
 
       <new-post-button />
-
-
+      
       <!-- Affichage d'une publication -->
       <div class="post" v-for="item of content" :key="item.title">
         <h3>{{ item.title }}</h3>
         <div>
           <span>{{ item.username }}</span>
+
           <img v-if="item.photo" class="miniature" :src="item.photo" />
         </div>
 
@@ -46,46 +46,14 @@
           </div>
         <!-- Fin Like -->
 
-          <comment-button :id="item.id" />
+          <comment-button class="commenter" :id="item.id" />
         </div>
-
         <div class="downPost">
+          <div style="display: none">{{ comments }}</div>
 
-          <!-- Affichage et suppression des commentaires -->
-          <button v-if="item.Comments.length > 1" class="comments" v-on:click="commentvisible = true" >
-            {{ item.Comments.length }} Commentaires
-          </button>
+          <display-comment :comments="item.Comments" />
 
-          <button v-else-if="item.Comments.length == 1" class="comments" v-on:click="commentvisible = true" >
-            {{ item.Comments.length }} Commentaire
-          </button>
 
-          <button v-else class="comments">0 Commentaire</button>
-
-          <div v-if="commentvisible">
-            <button id="closeComm" v-on:click="commentvisible = false">
-              x
-            </button>
-
-            <div class="comment" v-for="comment of item.Comments" :key="comment.postId" >
-              <div v-if="comment.postId == item.id">
-                <span v-if="commentvisible"> {{ comment.username }} </span>
-                <p>{{ comment.comment }}</p>
-
-                <button @click="displayDeleteComment = true" v-if="isAdmin" id="corbeilleCom">
-                  <img src="../assets/corbeille.png" alt="corbeille" />
-                </button> 
-
-                <div v-if="displayDeleteComment">
-                  <p>Souhaitez-vous vraiment supprimer ce commentaire ?</p>
-                  <div>
-                    <button>oui</button>
-                    <button @click="displayDeleteComment = false">non</button>
-                  </div>
-                </div>
-              </div>
-            </div>
-          </div>
           <!-- Fin affichage et suppression des commentaires  -->
 
           <!-- Suppression d'un Post -->
@@ -93,19 +61,20 @@
             <button
               v-if="user.id === item.UserId"
               @click="displayDeletePost = true"
-              id="corbeille"
+              class="corbeille"
             >
-              <img src="../assets/corbeille.png" alt="corbeille" />
+              <img :id="item.id + 0.1" src="../assets/corbeille.png" alt="corbeille" />
             </button>
             <button
+              :id="item.id + 0.1"
               v-else-if="isAdmin"
               @click="displayDeletePost = true"
-              id="corbeille"
+              class="corbeille"
             >
-              <img src="../assets/corbeille.png" alt="corbeille" />
+              <img :id="item.id + 0.1" src="../assets/corbeille.png" alt="corbeille" />
             </button>
 
-            <div v-if="displayDeletePost">
+            <div v-if="displayDeletePost && getPostId() == item.id + 0.1">
               <p>Souhaitez-vous vraiment supprimer ce post ?</p>
               <div>
                 <button @click="delPost(item.id)">oui</button>
@@ -125,44 +94,52 @@
 import LoggedHeader from "@/components/LoggedHeader";
 import NewPostButton from "../components/NewPostButton.vue";
 import CommentButton from "../components/CommentButton";
+import DisplayComment from '../components/DisplayComment.vue';
 
 export default {
   name: "Wall",
   computed: {
     content() {
       return this.$store.getters.content;
-    },
-    post() {
-      return this.$store.getters.post;
-    },
+    }, 
+    comments() {
+      return this.$store.getters.comments;
+    }, 
     user() {
       return this.$store.getters.user;
     },
     currentUser() {
       return this.$store.state.auth.user;
     },
+  
 
     isAdmin() {
       let user = JSON.parse(localStorage.getItem("user"));
       return user.user.isAdmin;
     },
+
+
   },
   data() {
     return {
-      commentvisible: false,
+      commentvisible : false,
       displayDeletePost: false,
       displayDeleteComment: false,
     };
   },
 
-  mounted() {
+  beforeCreate() {
     this.$store.dispatch("getContent");
-    this.$store.dispatch("getUserBoard");
-    let user = JSON.parse(localStorage.getItem("user"));
-    console.log(user.user.isAdmin);
+    this.$store.dispatch("getUserBoard");    
+
   },
 
+
+
   methods: {
+    isCommentaireOrCommentaires(Comments){
+      return Comments.length < 2 ? 'Commentaire' : 'Commentaires';
+    },
     isModerator() {
       let user = JSON.parse(localStorage.getItem("user"));
       if (user.isAdmin == "true") {
@@ -185,13 +162,21 @@ export default {
     },
 
     like(id) {
-      console.log("TOTO", id);
       this.$store.dispatch("likePost", id);
+    },
+
+    delComment(id) {
+      this.$store.dispatch("deleteComment", id);
+      this.displayDeleteComment = false;
     },
 
     delPost(id) {
       this.$store.dispatch("deletePost", id);
       this.displayDeletePost = false;
+    },
+    getPostId() {
+      let postId = event.target.id;
+      return postId;
     },
   },
 
@@ -199,6 +184,8 @@ export default {
     LoggedHeader,
     NewPostButton,
     CommentButton,
+    DisplayComment
+
   },
 };
 </script>
@@ -232,6 +219,9 @@ export default {
       flex-direction: row;
       justify-content: space-around;
       padding-bottom: 10px;
+      .commenter {
+        width: 80%;
+      }
       #pouce {
         border-style: none;
         background-color: white;
@@ -266,7 +256,7 @@ export default {
           width: 35px;
         }
       }
-      #corbeille {
+      .corbeille {
         border-style: none;
         background-color: white;
         float: right;
@@ -282,6 +272,16 @@ export default {
     .attachment {
       width: 100%;
       height: 100%;
+    }
+  }
+  @media screen and (max-width: 1400px) {
+    .post {
+      width: 60%;
+    }
+  }
+  @media screen and (max-width: 650px) {
+    .post {
+      width: 90%;
     }
   }
 }
