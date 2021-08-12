@@ -1,9 +1,4 @@
 import axios from 'axios';
-//import { post } from '../../../../backend/routes/user.route';
-//import authHeader from './auth-header';
-
-
-
 
 class PostService {
   getContent() {

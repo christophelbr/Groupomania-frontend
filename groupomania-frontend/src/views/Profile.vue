@@ -57,8 +57,6 @@
 
 <script>
 import LoggedHeader from "@/components/LoggedHeader";
-//import userService from "../services/user.service.js";
-//import axios from "axios";
 
 export default {
   name: "Profile",
@@ -92,7 +90,6 @@ export default {
     },
 
     newPhoto() {
-      console.log(this.file);
       let formData = new FormData();
       formData.append("image", this.file);
       this.$store.dispatch("updateUserPhoto", formData)
@@ -120,10 +117,7 @@ export default {
     delProfile() {
       this.$store.dispatch("deleteUserProfile");
       this.$store.dispatch("auth/logout");
-
     },
-
-    
   },
 };
 </script>
@@ -136,7 +130,7 @@ export default {
   .profile {
     display: flex;
     flex-direction: column;
-    width: 50%;
+    width: 100%;
     margin-left: auto;
     margin-right: auto;
     margin-top: 50px;

@@ -1,7 +1,5 @@
 import axios from 'axios';
 
-
-
 class CommentService {
   
   getComments(postId) {
@@ -16,7 +14,6 @@ let token = user.token;
     );
   }
   postComment(postId) {
-    console.log(postId);
     const API_URL = 'http://localhost:3000/api/';
 let user = JSON.parse(localStorage.getItem('user'));
 let token = user.token;
@@ -30,8 +27,6 @@ let token = user.token;
     let token = user.token;
     return axios.delete(`${API_URL}wall/post/comment/${id}`, { headers: { 'Authorization': `${token}` } })
   }
-  
-  
 }
 
 export default new CommentService();

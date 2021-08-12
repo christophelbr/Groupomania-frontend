@@ -67,10 +67,7 @@ export default {
           console.log(this.$store.state.auth.status);
         });
         })
-          /* .then(
-          () => {           
-            this.$router.push("/wall");
-          }); */
+      
         } else {
         (error) => {
           this.message =

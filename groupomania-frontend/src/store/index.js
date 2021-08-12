@@ -21,10 +21,6 @@ export default createStore({
     users: [],
     user: {},
 
-    // Like
-    //like: ''
-
-
   },
 
 
@@ -56,9 +52,7 @@ export default createStore({
 
   mutations: {
     // Posts
-    /* ADD_POST(state, post) {
-      state.content = [post, ...state.content];
-    }, */
+    
     GET_CONTENT(state, content) {
       state.content = content
     },
@@ -104,13 +98,10 @@ export default createStore({
         commit("GET_CONTENT", content);
       });
     },
+
     // Création d'un Post
     createPost({ commit }, post) {
       postService.createPost(post)
-        /* .then((response) => {
-          const post = response.data;
-          commit("ADD_POST", post);
-        }) */
         .then(() => {
           postService.getContent().then((response) => {
             const content = response.data;
@@ -145,9 +136,7 @@ export default createStore({
 
 
     // Commentaires
-
     // Récupération des commentaires
-
     getComments({ commit }) {
       postService.getContent().then((response) => {
         const content = response.data;
@@ -182,6 +171,7 @@ export default createStore({
           });
         })
     },
+
     // Suppression d'un commantaire
     deleteComment({ commit }, comment) {
       commentService.deleteComment(comment)
@@ -202,16 +192,8 @@ export default createStore({
 
 
     // Likes
-
     likePost({ commit }, like) {
-      console.log("tata", like);
       likeService.likePost(like)
-        .then((response) => {
-          const newLike = response.data;
-          console.log('newlike', newLike)
-          //commit("LIKE_POST", like);
-
-        })
         .then(() => {
           postService.getContent().then((response) => {
             const content = response.data;
@@ -227,7 +209,6 @@ export default createStore({
     },
 
     // Users
-
     getUserBoard({ commit }, user) {
       userService.getUserBoard(user).then((response) => {
         const user = response.data;
@@ -239,13 +220,10 @@ export default createStore({
 
     updateUserPhoto({ commit }, user) {
       let olduser = JSON.parse(localStorage.getItem('user'))
-      console.log("user", olduser)
       let token = olduser.token
       userService.updateUserPhoto(user)
         .then((response) => {
           const user = response.data.user;
-          console.log("raiponse", user)
-
           localStorage.setItem('user', JSON.stringify(
             {
               token: token,

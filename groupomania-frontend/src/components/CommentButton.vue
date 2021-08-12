@@ -22,8 +22,6 @@
 </template>
 
 <script>
-//import axios from "axios";
-//import CommentService from "../services/comment.service"
 
 let uuid = 0;
 
@@ -42,15 +40,11 @@ export default {
   components: {},
   methods: {
     newComment() {
-      
       const getPostId = document.getElementById(this.uuid).parentElement;
       const postId = getPostId.id;
       this.$store.dispatch("postComment", postId);
       //this.$store.dispatch("getContent");
       this.visible = false;
-      
-
-
     },
   },
 };

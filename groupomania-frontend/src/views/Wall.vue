@@ -12,9 +12,9 @@
       <div class="post" v-for="item of content" :key="item.title">
         <h3>{{ item.title }}</h3>
         <div>
-          <span>{{ item.username }}</span>
+          <span>{{ item.User.username }}</span>
 
-          <img v-if="item.photo" class="miniature" :src="item.photo" />
+          <img v-if="item.User.photo" class="miniature" :src="item.User.photo" />
         </div>
 
         <span>{{ item.createdAt }}</span>
@@ -111,15 +111,12 @@ export default {
     currentUser() {
       return this.$store.state.auth.user;
     },
-  
-
     isAdmin() {
       let user = JSON.parse(localStorage.getItem("user"));
       return user.user.isAdmin;
     },
-
-
   },
+
   data() {
     return {
       commentvisible : false,
@@ -133,8 +130,6 @@ export default {
     this.$store.dispatch("getUserBoard");    
 
   },
-
-
 
   methods: {
     isCommentaireOrCommentaires(Comments){
@@ -174,6 +169,7 @@ export default {
       this.$store.dispatch("deletePost", id);
       this.displayDeletePost = false;
     },
+    
     getPostId() {
       let postId = event.target.id;
       return postId;

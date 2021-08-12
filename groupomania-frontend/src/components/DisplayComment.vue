@@ -31,7 +31,6 @@
               <div v-if="displayDeleteComment  && getId() == comment.id">
                 <p>Souhaitez-vous vraiment supprimer ce commentaire ?</p>
                 <div>
-                  {{ comment.id }}
                   <button @click="delComment(comment.id)">oui</button>
                   <button @click="displayDeleteComment = false">non</button>
                 </div>
@@ -52,13 +51,6 @@ export default {
     "comments"
   ],
   computed: {
-    /* post() {
-      return this.$store.getters.post;
-    }, */
-    /* content() {
-      return this.$store.getters.content;
-    }, */
-
     isAdmin() {
       let user = JSON.parse(localStorage.getItem("user"));
       return user.user.isAdmin;
@@ -86,8 +78,6 @@ export default {
       this.$store.dispatch("deleteComment", id);
       this.displayDeleteComment = false;
     },
-
-    
   },
 };
 </script>
