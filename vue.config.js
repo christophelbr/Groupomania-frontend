@@ -1,3 +1,3 @@
 module.exports = {
-  publicPath: '/groupomania-frontend/'
+  publicPath: '/Groupomania-frontend/'
   }
