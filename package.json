@@ -3,7 +3,11 @@
   "version": "1.0.0",
   "description": "Projet 7 OpenClassrooms : Créer un réseau social d'entreprise Groupomania Frontend",
   "main": "index.js",
+  "devDependencies": {
+    "execa": "latest"
+  },
   "scripts": {
+    "deploy": "node scripts/gh-pages-deploy.js",
     "test": "echo \"Error: no test specified\" && exit 1"
   },
   "repository": {

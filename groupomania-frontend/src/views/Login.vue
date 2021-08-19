@@ -62,7 +62,6 @@ export default {
       if (this.user.email && this.user.password) {
         this.$store.dispatch("auth/login", this.user).then(() => {
           this.$router.push("/wall");
-          console.log(this.$store.state.auth.status);
         });
       } else {
         console.log("nok");

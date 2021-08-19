@@ -23,6 +23,8 @@
 
     &.router-link-exact-active {
       color: red;
+      font-weight: 900;
+      font-size: x-large;
     }
   }
 }

@@ -10,7 +10,7 @@
       
       <!-- Affichage d'une publication -->
       <div class="post" v-for="item of content" :key="item.title">
-        <h3>{{ item.title }}</h3>
+        <h2>{{ item.title }}</h2>
         <div>
           <span>{{ item.User.username }}</span>
 
@@ -40,7 +40,7 @@
         <!-- Like -->
         <div class="likecomment">
           <div>
-            <button @click="like(item.id)" id="pouce">
+            <button @click="like(item.id)" class="pouce">
               <img src="../assets/pouce.png" alt="pouce" /></button
             ><span> {{ item.likes }} </span>
           </div>
@@ -66,7 +66,7 @@
               <img :id="item.id + 0.1" src="../assets/corbeille.png" alt="corbeille" />
             </button>
             <button
-              :id="item.id + 0.1"
+              
               v-else-if="isAdmin"
               @click="displayDeletePost = true"
               class="corbeille"
@@ -218,7 +218,7 @@ export default {
       .commenter {
         width: 80%;
       }
-      #pouce {
+      .pouce {
         border-style: none;
         background-color: white;
       }
